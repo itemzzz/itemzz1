@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Itemzz – Best Deals, Best Products</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f7f5;--white:#ffffff;--dark:#0f0f13;--mid:#555566;--light:#aaaabc;
+  --accent:#2563eb;--accent-light:#eff4ff;--accent-dark:#1a49c4;
+  --green:#16a34a;--red:#dc2626;--yellow:#f59e0b;
+  --border:#e4e4ec;--radius:14px;
+  --shadow:0 2px 16px rgba(0,0,0,.06);--shadow-lg:0 12px 48px rgba(0,0,0,.12);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--dark);overflow-x:hidden}
+.page{display:none;min-height:100vh}.page.active{display:block}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:200;background:rgba(247,247,245,.94);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 5vw;height:64px}
+.logo{font-family:'Syne',sans-serif;font-size:1.75rem;font-weight:800;color:var(--dark);cursor:pointer;text-decoration:none;letter-spacing:-1px}
+.logo span{color:var(--accent)}
+.nav-links{display:flex;align-items:center;gap:1.8rem}
+.nav-links a{text-decoration:none;color:var(--mid);font-weight:600;font-size:.88rem;transition:color .2s;cursor:pointer}
+.nav-links a:hover{color:var(--dark)}
+.nav-right{display:flex;align-items:center;gap:.9rem}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 1.4rem;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;border:none;transition:all .2s;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 12px rgba(37,99,235,.22)}
+.btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.32)}
+.btn-outline{background:transparent;color:var(--dark);border:1.5px solid var(--border)}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-sm{padding:.42rem .95rem;font-size:.8rem;border-radius:8px}
+.admin-badge{display:flex;align-items:center;gap:.5rem;background:var(--accent-light);border:1px solid rgba(37,99,235,.2);padding:.35rem .9rem;border-radius:999px;font-size:.78rem;font-weight:700;color:var(--accent);cursor:pointer}
+.admin-badge:hover{background:#dbeafe}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);z-index:999;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:20px;padding:2.5rem;width:100%;max-width:420px;box-shadow:var(--shadow-lg);animation:popIn .25s ease;position:relative}
+@keyframes popIn{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--bg);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1rem;color:var(--mid);display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:var(--border)}
+.modal-icon{width:52px;height:52px;background:var(--accent-light);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1.2rem}
+.modal h2{font-family:'Syne',sans-serif;font-size:1.5rem;margin-bottom:.25rem}
+.modal .sub{color:var(--light);font-size:.85rem;margin-bottom:1.8rem;line-height:1.5}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.78rem;font-weight:700;color:var(--mid);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.6px}
+.field input,.field select{width:100%;padding:.78rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.92rem;color:var(--dark);background:var(--bg);outline:none;transition:border-color .2s,box-shadow .2s}
+.field input:focus,.field select:focus{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.field input::placeholder{color:#c0c0d0}
+.field select{appearance:none;cursor:pointer}
+.error-banner{background:#fee2e2;border:1px solid #fca5a5;border-radius:10px;padding:.75rem 1rem;font-size:.83rem;color:var(--red);font-weight:600;margin-bottom:1rem;display:none;align-items:center;gap:.5rem}
+.error-banner.show{display:flex}
+
+/* HERO */
+.hero{max-width:1160px;margin:0 auto;padding:80px 5vw 60px;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent-light);color:var(--accent);font-size:.74rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:.32rem .85rem;border-radius:999px;margin-bottom:1.2rem}
+.hero h1{font-family:'Syne',sans-serif;font-size:clamp(2.4rem,4.5vw,3.8rem);font-weight:800;line-height:1.08;letter-spacing:-1px;margin-bottom:1.2rem}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero p{color:var(--mid);font-size:1rem;line-height:1.75;margin-bottom:2rem;max-width:440px}
+.hero-btns{display:flex;gap:.9rem;flex-wrap:wrap}
+.hero-stats{display:flex;gap:2.5rem;margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--border);flex-wrap:wrap}
+.stat .n{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800}
+.stat .l{font-size:.75rem;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-top:.1rem}
+.hero-visual{background:var(--white);border-radius:24px;padding:1.8rem;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+.hv-label{font-size:.72rem;font-weight:800;color:var(--light);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem}
+.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.9rem}
+.mini-card{background:var(--bg);border-radius:12px;padding:1.1rem;text-align:center;border:1px solid var(--border)}
+.mini-card .me{font-size:2rem;margin-bottom:.4rem}
+.mini-card .mn{font-size:.75rem;font-weight:700}
+.mini-card .mp{font-size:.8rem;color:var(--accent);font-weight:800;margin-top:.15rem}
+
+/* SECTIONS */
+.section{padding:70px 5vw;max-width:1160px;margin:0 auto}
+.section-full{padding:70px 5vw;background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.section-full .inner{max-width:1160px;margin:0 auto}
+.sec-label{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem}
+.sec-title{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;letter-spacing:-.5px;margin-bottom:.5rem}
+.sec-sub{color:var(--mid);font-size:.92rem;max-width:460px;line-height:1.7;margin-bottom:2.5rem}
+
+/* NICHES */
+.niches-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.9rem}
+.niche-pill{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:1.3rem 1rem;text-align:center;cursor:pointer;transition:all .22s;text-decoration:none;color:inherit;display:block}
+.niche-pill:hover{border-color:var(--accent);background:var(--accent-light);transform:translateY(-3px)}
+.niche-pill .ico{font-size:1.9rem;margin-bottom:.45rem}
+.niche-pill .nl{font-size:.8rem;font-weight:700}
+
+/* PRODUCTS */
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:1.3rem}
+.product-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .25s,box-shadow .25s}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.product-img-wrap{position:relative;height:185px;display:flex;align-items:center;justify-content:center;font-size:4rem;background:#f0f0f8;overflow:hidden}
+.product-img-wrap img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.emoji-fb{position:relative;z-index:1}
+.badge{position:absolute;top:10px;left:10px;font-size:.67rem;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:.22rem .65rem;border-radius:6px}
+.badge-hot{background:#fee2e2;color:var(--red)}.badge-new{background:#dcfce7;color:var(--green)}.badge-sale{background:#fef3c7;color:#92400e}
+.product-body{padding:1.2rem}
+.product-cat{font-size:.68rem;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:.3rem}
+.product-name{font-weight:700;font-size:.95rem;line-height:1.3;margin-bottom:.4rem}
+.product-desc{font-size:.8rem;color:var(--mid);line-height:1.5;margin-bottom:1rem}
+.product-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.price{font-family:'Syne',sans-serif;font-size:1.35rem;font-weight:800}
+.old-price{font-size:.78rem;color:var(--light);text-decoration:line-through;margin-left:.3rem}
+.stars-row{font-size:.75rem;color:var(--yellow)}
+.btn-deal{background:var(--accent);color:#fff;padding:.5rem 1.1rem;border-radius:8px;font-weight:700;font-size:.8rem;text-decoration:none;transition:background .2s;white-space:nowrap}
+.btn-deal:hover{background:var(--accent-dark)}
+
+/* WHY */
+.why-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.1rem}
+.why-card{background:var(--bg);border-radius:var(--radius);padding:1.7rem;border:1px solid var(--border)}
+.why-card .wi{font-size:1.7rem;margin-bottom:.75rem}
+.why-card h3{font-weight:800;font-size:.92rem;margin-bottom:.35rem}
+.why-card p{font-size:.82rem;color:var(--mid);line-height:1.6}
+
+/* NEWSLETTER */
+.nl-box{background:var(--dark);border-radius:20px;padding:3rem;display:flex;justify-content:space-between;align-items:center;gap:2rem;flex-wrap:wrap}
+.nl-box h2{font-family:'Syne',sans-serif;font-size:1.7rem;color:#fff;max-width:320px;letter-spacing:-.5px}
+.nl-box p{color:rgba(255,255,255,.5);font-size:.85rem;margin-top:.4rem}
+.nl-form{display:flex;gap:.65rem;flex-wrap:wrap}
+.nl-form input{padding:.78rem 1.1rem;border-radius:9px;border:none;font-family:'DM Sans',sans-serif;font-size:.88rem;width:220px;outline:none}
+.nl-form button{background:var(--accent);color:#fff;padding:.78rem 1.4rem;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:800;font-size:.88rem;border:none;cursor:pointer;transition:all .2s}
+.nl-form button:hover{background:var(--accent-dark);transform:translateY(-1px)}
+
+/* FOOTER */
+footer{background:var(--dark);padding:55px 5vw 28px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;max-width:1160px;margin:0 auto 2rem}
+.footer-logo{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;letter-spacing:-1px}
+.footer-logo span{color:var(--accent)}
+.footer-brand p{font-size:.83rem;color:#666;line-height:1.7;margin-top:.65rem;max-width:250px}
+.disclaimer{font-size:.7rem;color:#444;margin-top:.6rem}
+.fc h4{font-size:.82rem;font-weight:800;color:#fff;margin-bottom:.9rem}
+.fc ul{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.fc ul li a{text-decoration:none;color:#666;font-size:.82rem;transition:color .2s;cursor:pointer}
+.fc ul li a:hover{color:#fff}
+.footer-bottom{border-top:1px solid #1a1a1a;padding-top:1.4rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.8rem;max-width:1160px;margin:0 auto}
+.footer-bottom p{font-size:.78rem;color:#444}
+
+/* DASHBOARD */
+.dash-layout{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 64px)}
+.sidebar{background:var(--white);border-right:1px solid var(--border);padding:1.5rem 1rem;display:flex;flex-direction:column;gap:.3rem}
+.sidebar-item{display:flex;align-items:center;gap:.75rem;padding:.72rem 1rem;border-radius:10px;cursor:pointer;font-weight:600;font-size:.87rem;color:var(--mid);transition:all .18s;border:none;background:none;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--bg);color:var(--dark)}
+.sidebar-item.active{background:var(--accent-light);color:var(--accent)}
+.sidebar-item .si{font-size:1rem;width:20px;text-align:center}
+.sidebar-divider{height:1px;background:var(--border);margin:.5rem 0}
+.dash-main{padding:2.5rem;background:var(--bg);overflow-y:auto}
+.dash-header{margin-bottom:2rem}
+.dash-header h1{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;letter-spacing:-.5px}
+.dash-header p{color:var(--mid);font-size:.88rem;margin-top:.3rem}
+.dash-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1.1rem;margin-bottom:2rem}
+.dash-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem}
+.dash-card .dc-label{font-size:.72rem;font-weight:700;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.5rem}
+.dash-card .dc-val{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800}
+.dash-card .dc-sub{font-size:.76rem;color:var(--green);margin-top:.15rem;font-weight:600}
+.editor-box{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.4rem}
+.editor-box h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:800;margin-bottom:1.4rem;padding-bottom:.9rem;border-bottom:1px solid var(--border)}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.editor-grid .field{margin-bottom:0}
+.editor-grid .full{grid-column:1/-1}
+.prod-list-item{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem 1.4rem;display:flex;align-items:center;gap:1.1rem;margin-bottom:.75rem;transition:box-shadow .2s}
+.prod-list-item:hover{box-shadow:var(--shadow)}
+.pli-thumb{width:50px;height:50px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;overflow:hidden}
+.pli-thumb img{width:100%;height:100%;object-fit:cover}
+.pli-info{flex:1;min-width:0}
+.pli-name{font-weight:700;font-size:.92rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pli-cat{font-size:.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:.15rem}
+.pli-status{font-size:.72rem;font-weight:600;margin-top:.15rem}
+.pli-price{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:800;white-space:nowrap;margin-right:.5rem}
+.pli-actions{display:flex;gap:.5rem;flex-shrink:0}
+.empty-state{text-align:center;padding:4rem 2rem;background:var(--white);border:1px solid var(--border);border-radius:var(--radius)}
+.empty-state .es-ico{font-size:3rem;margin-bottom:1rem}
+.empty-state h3{font-family:'Syne',sans-serif;font-size:1.2rem;margin-bottom:.4rem}
+.empty-state p{font-size:.85rem;color:var(--light);margin-bottom:1.5rem}
+.guide-step{display:flex;align-items:flex-start;gap:1rem;padding:1rem 1.2rem;background:var(--bg);border-radius:10px;border:1px solid var(--border)}
+.step-num{width:30px;height:30px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;flex-shrink:0;margin-top:.1rem}
+.step-content h4{font-weight:700;font-size:.9rem;margin-bottom:.2rem}
+.step-content p{font-size:.8rem;color:var(--mid);line-height:1.5}
+.affiliate-field{background:#fffbeb;border:1.5px solid #fde68a;border-radius:12px;padding:1rem}
+.affiliate-field label{color:#92400e !important}
+.affiliate-field input{border:none !important;background:transparent !important;box-shadow:none !important;padding:.5rem 0 0 !important}
+
+/* TOAST */
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:9999;background:var(--dark);color:#fff;padding:.9rem 1.4rem;border-radius:12px;font-weight:600;font-size:.88rem;box-shadow:var(--shadow-lg);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;max-width:320px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.success{background:var(--green)}.toast.error{background:var(--red)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease both}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .55s ease,transform .55s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;gap:2rem}.hero-visual{display:none}
+  .dash-layout{grid-template-columns:1fr}
+  .sidebar{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--border);padding:.8rem;gap:.4rem}
+  .sidebar-item{white-space:nowrap;flex-shrink:0}.sidebar-divider{display:none}
+  .dash-main{padding:1.5rem}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .editor-grid{grid-template-columns:1fr}.editor-grid .full{grid-column:1}
+}
+@media(max-width:600px){
+  .nav-links{display:none}.footer-grid{grid-template-columns:1fr}
+  .nl-box{flex-direction:column}.nl-form input{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- ADMIN LOGIN MODAL -->
+<div class="modal-overlay" id="adminLoginModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('adminLoginModal')">✕</button>
+    <div class="modal-icon">🔐</div>
+    <h2>Admin Access Only</h2>
+    <p class="sub">This area is restricted to the store owner. Public visitors cannot access this.</p>
+    <div class="error-banner" id="loginErr"><span>⚠️</span><span id="loginErrMsg">Invalid credentials.</span></div>
+    <div class="field"><label>Admin Email</label><input type="email" id="al-email" placeholder="Enter your admin email" autocomplete="email"/></div>
+    <div class="field"><label>Password</label><input type="password" id="al-pass" placeholder="Enter your password" autocomplete="current-password"/></div>
+    <button class="btn btn-primary" style="width:100%;padding:.85rem;margin-top:.5rem;font-size:.95rem" onclick="doAdminLogin()">Access Dashboard →</button>
+    <p style="font-size:.75rem;color:var(--light);text-align:center;margin-top:1rem">🔒 Only the store owner can log in here.</p>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" onclick="showPage('home')" style="text-decoration:none">Item<span>zz</span></a>
+  <div class="nav-links">
+    <a onclick="goSection('niches')">Niches</a>
+    <a onclick="goSection('deals')">Deals</a>
+    <a onclick="goSection('why')">Why Us</a>
+  </div>
+  <div class="nav-right" id="navRight"></div>
+</nav>
+
+<!-- ══════════ HOME ══════════ -->
+<div class="page active" id="page-home">
+
+  <div class="hero fade-up">
+    <div class="hero-text">
+      <div class="hero-tag">🔥 Curated Deals Daily</div>
+      <h1>Find the <em>Best</em><br>Products.<br>Save Big.</h1>
+      <p>Itemzz hand-picks top products across every major niche — vetted, discounted, and linked to the best prices.</p>
+      <div class="hero-btns">
+        <a onclick="goSection('deals')" class="btn btn-primary" style="cursor:pointer;padding:.75rem 1.8rem;font-size:.95rem">Browse Deals →</a>
+        <a onclick="goSection('niches')" class="btn btn-outline" style="cursor:pointer;padding:.75rem 1.8rem;font-size:.95rem">Explore Niches</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="n" id="heroCount">6+</div><div class="l">Products</div></div>
+        <div class="stat"><div class="n">12K+</div><div class="l">Shoppers</div></div>
+        <div class="stat"><div class="n">Up to 70%</div><div class="l">Savings</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hv-label">Today's Picks</div>
+      <div class="mini-grid">
+        <div class="mini-card"><div class="me">🎧</div><div class="mn">ANC Headphones</div><div class="mp">$89</div></div>
+        <div class="mini-card"><div class="me">💪</div><div class="mn">Resistance Bands</div><div class="mp">$29</div></div>
+        <div class="mini-card"><div class="me">🎮</div><div class="mn">Gaming Controller</div><div class="mp">$45</div></div>
+        <div class="mini-card"><div class="me">💄</div><div class="mn">Vitamin C Serum</div><div class="mp">$22</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-full" id="niches">
+    <div class="inner reveal">
+      <div class="sec-label">Browse by Category</div>
+      <div class="sec-title">Every Niche. Best Picks.</div>
+      <p class="sec-sub">Tap any category to see the top deals in that space.</p>
+      <div class="niches-grid">
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">💻</div><div class="nl">Tech & Gadgets</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">💪</div><div class="nl">Health & Fitness</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">👗</div><div class="nl">Fashion & Style</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">🏠</div><div class="nl">Home & Living</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">🎮</div><div class="nl">Gaming</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">✈️</div><div class="nl">Travel</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">💄</div><div class="nl">Beauty</div></a>
+        <a class="niche-pill" onclick="goSection('deals')"><div class="ico">🍽️</div><div class="nl">Food & Kitchen</div></a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="deals">
+    <div class="sec-label">Hand-Picked for You</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:1rem;margin-bottom:2rem">
+      <div class="sec-title">Featured Deals</div>
+    </div>
+    <div class="products-grid reveal" id="publicGrid"></div>
+  </div>
+
+  <div class="section-full" id="why">
+    <div class="inner reveal">
+      <div class="sec-label">Why Itemzz</div>
+      <div class="sec-title">We Find It. You Save.</div>
+      <p class="sec-sub">Every product is researched and linked to the best prices online.</p>
+      <div class="why-grid">
+        <div class="why-card"><div class="wi">🔍</div><h3>Fully Vetted</h3><p>Every product researched before it ever gets listed. No junk, ever.</p></div>
+        <div class="why-card"><div class="wi">💸</div><h3>Best Prices</h3><p>We track prices across platforms so you always get the real deal.</p></div>
+        <div class="why-card"><div class="wi">⚡</div><h3>Daily Updates</h3><p>Fresh deals added daily across all 8 niches.</p></div>
+        <div class="why-card"><div class="wi">🤝</div><h3>Honest Picks</h3><p>We earn a small commission — but our reviews are always unbiased.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section reveal">
+    <div class="nl-box">
+      <div><h2>Get Deals Before Everyone Else</h2><p>No spam. Just the hottest picks in your inbox.</p></div>
+      <div class="nl-form">
+        <input type="email" id="nlEmail" placeholder="your@email.com"/>
+        <button onclick="subscribeNL()">Subscribe 🔥</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">Item<span>zz</span></div>
+        <p>Your trusted hub for the best affiliate deals. Smart picks. Real savings. Every day.</p>
+        <p class="disclaimer">* Contains affiliate links. We may earn a commission at no extra cost to you.</p>
+      </div>
+      <div class="fc"><h4>Niches</h4><ul><li><a>Tech & Gadgets</a></li><li><a>Health & Fitness</a></li><li><a>Fashion</a></li><li><a>Gaming</a></li><li><a>Travel</a></li></ul></div>
+      <div class="fc"><h4>Company</h4><ul><li><a>About Us</a></li><li><a>How It Works</a></li><li><a>Blog</a></li><li><a>Contact</a></li></ul></div>
+      <div class="fc"><h4>Legal</h4><ul><li><a>Privacy Policy</a></li><li><a>Terms of Use</a></li><li><a>Affiliate Disclosure</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 Itemzz. All rights reserved.</p><p style="color:#555">Made for deal hunters worldwide 🌍</p></div>
+  </footer>
+</div>
+
+<!-- ══════════ DASHBOARD ══════════ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-layout">
+    <div class="sidebar">
+      <button class="sidebar-item active" onclick="showTab('overview',this)"><span class="si">📊</span> Overview</button>
+      <button class="sidebar-item" onclick="showTab('products',this)"><span class="si">📦</span> Products</button>
+      <button class="sidebar-item" onclick="showTab('add',this)"><span class="si">➕</span> Add Product</button>
+      <div class="sidebar-divider"></div>
+      <button class="sidebar-item" onclick="showPage('home')" style="color:var(--accent)"><span class="si">🏠</span> View Store</button>
+      <button class="sidebar-item" onclick="doLogout()" style="color:var(--red);margin-top:auto"><span class="si">🚪</span> Log Out</button>
+    </div>
+    <div class="dash-main">
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview">
+        <div class="dash-header"><h1>Dashboard 🛡️</h1><p>You're logged in as Admin. Only you can see this.</p></div>
+        <div class="dash-cards">
+          <div class="dash-card"><div class="dc-label">Total Products</div><div class="dc-val" id="dc-total">0</div><div class="dc-sub">live on your store</div></div>
+          <div class="dash-card"><div class="dc-label">Active Aff. Links</div><div class="dc-val" id="dc-links">0</div><div class="dc-sub">earning commissions</div></div>
+          <div class="dash-card"><div class="dc-label">Store Status</div><div class="dc-val" style="font-size:1.4rem">🟢</div><div class="dc-sub">Live & public</div></div>
+          <div class="dash-card"><div class="dc-label">Est. Earnings</div><div class="dc-val">$0</div><div class="dc-sub">check affiliate portal</div></div>
+        </div>
+        <div class="editor-box">
+          <h3>🚀 How to Earn Money — Step by Step</h3>
+          <div style="display:flex;flex-direction:column;gap:.8rem">
+            <div class="guide-step"><div class="step-num">1</div><div class="step-content"><h4>Join a free affiliate program</h4><p>Go to Amazon Associates (associates.amazon.com), ClickBank, or ShareASale and sign up free.</p></div></div>
+            <div class="guide-step"><div class="step-num">2</div><div class="step-content"><h4>Find a product & get your affiliate link</h4><p>Search any product → click "Get Link" → copy your special URL. It has your unique ID in it.</p></div></div>
+            <div class="guide-step"><div class="step-num">3</div><div class="step-content"><h4>Add the product to Itemzz</h4><p>Click "Add Product" → fill in the name, price, image, and paste your affiliate link → Save. It goes live instantly.</p></div></div>
+            <div class="guide-step"><div class="step-num">4</div><div class="step-content"><h4>Share your store link everywhere 💸</h4><p>Post on TikTok, Instagram, WhatsApp. Every visitor who clicks "Get Deal" and buys = you earn a commission automatically.</p></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS TAB -->
+      <div id="tab-products" style="display:none">
+        <div class="dash-header" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem">
+          <div><h1>Products</h1><p>Manage everything in your store.</p></div>
+          <button class="btn btn-primary" onclick="showTab('add',null)">+ Add Product</button>
+        </div>
+        <div id="productList"></div>
+      </div>
+
+      <!-- ADD PRODUCT TAB -->
+      <div id="tab-add" style="display:none">
+        <div class="dash-header"><h1>Add Product</h1><p>Fill in the details below. Your affiliate link is what earns you money.</p></div>
+        <div class="editor-box">
+          <h3>Product Details</h3>
+          <div class="editor-grid">
+            <div class="field full"><label>Product Name *</label><input type="text" id="f-name" placeholder="e.g. Sony WH-1000XM5 Headphones"/></div>
+            <div class="field full"><label>Short Description</label><input type="text" id="f-desc" placeholder="e.g. 40hr battery, noise cancellation, premium sound"/></div>
+            <div class="field"><label>Price * (e.g. $49)</label><input type="text" id="f-price" placeholder="$49"/></div>
+            <div class="field"><label>Old / Crossed-Out Price</label><input type="text" id="f-oldprice" placeholder="$99"/></div>
+            <div class="field"><label>Category *</label>
+              <select id="f-cat"><option>Tech & Gadgets</option><option>Health & Fitness</option><option>Fashion & Style</option><option>Home & Living</option><option>Gaming</option><option>Travel</option><option>Beauty & Skincare</option><option>Food & Kitchen</option></select>
+            </div>
+            <div class="field"><label>Badge</label>
+              <select id="f-badge"><option value="">None</option><option value="hot">🔥 HOT</option><option value="new">✨ NEW</option><option value="sale">💰 SALE</option></select>
+            </div>
+            <div class="field"><label>Emoji (shown if no image)</label><input type="text" id="f-emoji" placeholder="🎧"/></div>
+            <div class="field"><label>Product Image URL</label><input type="text" id="f-img" placeholder="https://example.com/product.jpg"/></div>
+            <div class="field full affiliate-field">
+              <label>⭐ Your Affiliate Link * — Paste it here to earn commissions!</label>
+              <input type="url" id="f-link" placeholder="https://amazon.com/dp/XXXX?tag=yourID-20"/>
+            </div>
+            <div class="field"><label>Star Rating (1–5)</label><input type="number" id="f-stars" value="5" min="1" max="5"/></div>
+            <div class="field"><label>Number of Reviews</label><input type="text" id="f-reviews" placeholder="e.g. 1.2k"/></div>
+          </div>
+          <div style="display:flex;gap:.9rem;margin-top:1.5rem;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="saveProduct()" style="padding:.8rem 2rem">💾 Save & Publish</button>
+            <button class="btn btn-outline" onclick="clearForm()">Clear</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// ADMIN CREDENTIALS (only you)
+// ═══════════════════════════════
+const ADMIN_EMAIL    = 'jbushehri2@gmail.com';
+const ADMIN_PASSWORD = 'Itemzz2026!';
+// ═══════════════════════════════
+
+let isAdmin = false;
+let products = [];
+
+const SAMPLE = [
+  {id:'s1',name:'ProSound ANC Headphones X7',desc:'40hr battery, noise cancellation, premium audio.',price:'$89',oldPrice:'$199',cat:'Tech & Gadgets',badge:'hot',emoji:'🎧',img:'',link:'#',stars:5,reviews:'2.4k'},
+  {id:'s2',name:'FlexCore Resistance Band Set',desc:'5 resistance levels, full-body workout, portable.',price:'$29',oldPrice:'$59',cat:'Health & Fitness',badge:'new',emoji:'🏋️',img:'',link:'#',stars:4,reviews:'876'},
+  {id:'s3',name:'UrbanStep Pro Sneakers',desc:'Lightweight, breathable, street-ready style.',price:'$64',oldPrice:'$130',cat:'Fashion & Style',badge:'sale',emoji:'👟',img:'',link:'#',stars:5,reviews:'1.1k'},
+  {id:'s4',name:'NexusPlay Wireless Controller',desc:'Ultra-low latency, turbo mode, multi-platform.',price:'$45',oldPrice:'$89',cat:'Gaming',badge:'hot',emoji:'🎮',img:'',link:'#',stars:5,reviews:'3.2k'},
+  {id:'s5',name:'RoamLite Carry-On Spinner',desc:'Hardshell, TSA-approved, 360° wheels.',price:'$79',oldPrice:'$160',cat:'Travel',badge:'new',emoji:'✈️',img:'',link:'#',stars:4,reviews:'652'},
+  {id:'s6',name:'GlowLab Vitamin C Serum',desc:'Brightening, anti-aging, dermatologist tested.',price:'$22',oldPrice:'$50',cat:'Beauty & Skincare',badge:'sale',emoji:'💄',img:'',link:'#',stars:5,reviews:'4.5k'},
+];
+
+function init(){
+  isAdmin = sessionStorage.getItem('itemzz_admin') === 'true';
+  products = JSON.parse(localStorage.getItem('itemzz_products')||'[]');
+  renderNav();
+  renderPublicGrid();
+  setupReveal();
+}
+
+function renderNav(){
+  const el = document.getElementById('navRight');
+  if(isAdmin){
+    el.innerHTML = `<div class="admin-badge" onclick="showPage('dashboard')">🛡️ My Dashboard</div><button class="btn btn-outline btn-sm" onclick="doLogout()">Log Out</button>`;
+  } else {
+    el.innerHTML = `<button class="btn btn-outline btn-sm" onclick="openModal('adminLoginModal')" style="font-size:.8rem">🔐 Admin Login</button>`;
+  }
+}
+
+function showPage(name){
+  if(name==='dashboard' && !isAdmin){ openModal('adminLoginModal'); return; }
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='dashboard') refreshDash();
+}
+
+function goSection(id){
+  if(!document.getElementById('page-home').classList.contains('active')) showPage('home');
+  setTimeout(()=>{ const el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth',block:'start'}); },120);
+}
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open')); });
+
+function doAdminLogin(){
+  const email   = document.getElementById('al-email').value.trim().toLowerCase();
+  const pass    = document.getElementById('al-pass').value;
+  const errEl   = document.getElementById('loginErr');
+  const errMsg  = document.getElementById('loginErrMsg');
+  const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if(!emailRe.test(email)){
+    errMsg.textContent='Please enter a valid email address.';
+    errEl.classList.add('show'); return;
+  }
+  if(!pass){
+    errMsg.textContent='Please enter your password.';
+    errEl.classList.add('show'); return;
+  }
+  if(email === ADMIN_EMAIL.toLowerCase() && pass === ADMIN_PASSWORD){
+    errEl.classList.remove('show');
+    isAdmin = true;
+    sessionStorage.setItem('itemzz_admin','true');
+    closeModal('adminLoginModal');
+    document.getElementById('al-email').value='';
+    document.getElementById('al-pass').value='';
+    renderNav();
+    showPage('dashboard');
+    showToast('Welcome back, Admin! 🛡️','success');
+  } else {
+    errMsg.textContent='Incorrect email or password. Access denied.';
+    errEl.classList.add('show');
+    document.getElementById('al-pass').value='';
+  }
+}
+
+['al-email','al-pass'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter') doAdminLogin(); });
+});
+
+function doLogout(){
+  isAdmin=false;
+  sessionStorage.removeItem('itemzz_admin');
+  renderNav();
+  showPage('home');
+  showToast('Logged out.','');
+}
+
+function refreshDash(){
+  updateDashCards();
+  renderProductList();
+}
+
+function updateDashCards(){
+  document.getElementById('dc-total').textContent = SAMPLE.length + products.length;
+  document.getElementById('dc-links').textContent = products.filter(p=>p.link&&p.link.startsWith('http')).length;
+}
+
+function showTab(name,btn){
+  ['overview','products','add'].forEach(t=>{
+    document.getElementById('tab-'+t).style.display = t===name?'block':'none';
+  });
+  if(btn){ document.querySelectorAll('.sidebar-item').forEach(s=>s.classList.remove('active')); btn.classList.add('active'); }
+  if(name==='products') renderProductList();
+}
+
+function saveProduct(){
+  const name  = document.getElementById('f-name').value.trim();
+  const price = document.getElementById('f-price').value.trim();
+  const link  = document.getElementById('f-link').value.trim();
+  if(!name)  { showToast('Product name is required.','error'); return; }
+  if(!price) { showToast('Price is required.','error'); return; }
+  if(!link)  { showToast('Affiliate link is required — this is what earns you money!','error'); return; }
+
+  products.push({
+    id:'p'+Date.now(), name, price,
+    desc:     document.getElementById('f-desc').value.trim(),
+    oldPrice: document.getElementById('f-oldprice').value.trim(),
+    cat:      document.getElementById('f-cat').value,
+    badge:    document.getElementById('f-badge').value,
+    emoji:    document.getElementById('f-emoji').value.trim()||'🛒',
+    img:      document.getElementById('f-img').value.trim(),
+    link,
+    stars:    parseInt(document.getElementById('f-stars').value)||5,
+    reviews:  document.getElementById('f-reviews').value.trim()||'0',
+  });
+
+  localStorage.setItem('itemzz_products',JSON.stringify(products));
+  renderPublicGrid(); updateHeroCount(); updateDashCards(); clearForm();
+  showToast('Product published to your store ✅','success');
+  showTab('products',null);
+  document.querySelectorAll('.sidebar-item').forEach((s,i)=>s.classList.toggle('active',i===1));
+  renderProductList();
+}
+
+function deleteProduct(id){
+  if(!confirm('Remove this product from your store?')) return;
+  products = products.filter(p=>p.id!==id);
+  localStorage.setItem('itemzz_products',JSON.stringify(products));
+  renderPublicGrid(); updateHeroCount(); updateDashCards(); renderProductList();
+  showToast('Product removed.','');
+}
+
+function clearForm(){
+  ['f-name','f-desc','f-price','f-oldprice','f-emoji','f-img','f-link','f-reviews'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('f-stars').value='5';
+}
+
+function renderProductList(){
+  const el = document.getElementById('productList');
+  if(!el) return;
+  const all = [...SAMPLE,...products];
+  if(!all.length){
+    el.innerHTML=`<div class="empty-state"><div class="es-ico">📦</div><h3>No products yet</h3><p>Add your first product to start earning.</p><button class="btn btn-primary" onclick="showTab('add',null)">+ Add Product</button></div>`;
+    return;
+  }
+  el.innerHTML = all.map(p=>{
+    const isSample = p.id.startsWith('s');
+    const hasLink  = p.link && p.link!=='#' && p.link.startsWith('http');
+    return `<div class="prod-list-item">
+      <div class="pli-thumb">${p.img?`<img src="${p.img}" onerror="this.parentNode.textContent='${p.emoji||'🛒'}'">`:(p.emoji||'🛒')}</div>
+      <div class="pli-info">
+        <div class="pli-name">${p.name}</div>
+        <div class="pli-cat">${p.cat}${isSample?' · <span style="color:var(--light);font-weight:500">Sample</span>':''}</div>
+        <div class="pli-status" style="color:${hasLink?'var(--green)':'var(--red)'}">${hasLink?'✅ Affiliate link active':'⚠️ No affiliate link'}</div>
+      </div>
+      <div class="pli-price">${p.price}</div>
+      <div class="pli-actions">
+        <a href="${p.link}" target="_blank" rel="noopener" class="btn btn-outline btn-sm">Preview</a>
+        ${!isSample?`<button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')">Delete</button>`:'<span style="font-size:.72rem;color:var(--light)">Built-in</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderPublicGrid(){
+  const el = document.getElementById('publicGrid');
+  if(!el) return;
+  const all = [...SAMPLE,...products];
+  el.innerHTML = all.map(p=>{
+    const imgInner = p.img
+      ? `<img src="${p.img}" onerror="this.style.display='none'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0"/><span class="emoji-fb">${p.emoji||'🛒'}</span>`
+      : `<span class="emoji-fb">${p.emoji||'🛒'}</span>`;
+    const badgeMap = {hot:`<span class="badge badge-hot">🔥 HOT</span>`,new:`<span class="badge badge-new">✨ NEW</span>`,sale:`<span class="badge badge-sale">💰 SALE</span>`};
+    const badge = p.badge ? (badgeMap[p.badge]||'') : '';
+    const n = Math.min(5,Math.max(1,parseInt(p.stars)||5));
+    return `<div class="product-card">
+      <div class="product-img-wrap">${imgInner}${badge}</div>
+      <div class="product-body">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc||''}</div>
+        <div class="product-footer">
+          <div>
+            <span class="price">${p.price}</span>${p.oldPrice?`<span class="old-price">${p.oldPrice}</span>`:''}
+            <div class="stars-row" style="margin-top:.2rem">${'★'.repeat(n)+'☆'.repeat(5-n)} <span style="color:var(--light);font-size:.72rem">(${p.reviews||'0'})</span></div>
+          </div>
+          <a href="${p.link||'#'}" target="_blank" rel="noopener" class="btn-deal">Get Deal</a>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateHeroCount(){
+  const el=document.getElementById('heroCount');
+  if(el) el.textContent=(SAMPLE.length+products.length)+'+';
+}
+
+function subscribeNL(){
+  const val=document.getElementById('nlEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)){ showToast('Please enter a valid email.','error'); return; }
+  document.getElementById('nlEmail').value='';
+  showToast('Subscribed! You\'ll get the best deals first 🎉','success');
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast'+(type?' '+type:'');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+function setupReveal(){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(r=>obs.observe(r));
+}
+
+init();
+</script>
+</body>
+</html>
